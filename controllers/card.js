@@ -1,4 +1,5 @@
 const Card = require('../models/card');
+
 const {
   CREATED_CODE,
   ERROR_CODE,
@@ -6,10 +7,16 @@ const {
   ERROR_NOT_FOUND,
 } = require('../utils/constants');
 
-module.exports.createCard = (req, res) => {
+const getCards = (req, res) => {
+  Card.find({})
+    .populate(['owner', 'likes'])
+    .then((card) => res.send({ data: card }))
+    .catch(() => res.status(ERROR_INTERNAL_SERVER).send({ message: 'Произошла ошибка' }));
+};
+
+const createCard = (req, res) => {
   const { name, link } = req.body;
   const owner = req.user._id;
-
   Card.create({ name, link, owner })
     .then((card) => {
       res
@@ -25,14 +32,7 @@ module.exports.createCard = (req, res) => {
     });
 };
 
-module.exports.getCards = (req, res) => {
-  Card.find({})
-    .populate(['owner', 'likes'])
-    .then((card) => res.send({ data: card }))
-    .catch(() => res.status(ERROR_INTERNAL_SERVER).send({ message: 'Произошла ошибка' }));
-};
-
-module.exports.deleteCard = (req, res) => {
+const deleteCard = (req, res) => {
   const cardId = req.params._id;
 
   Card.findByIdAndRemove(cardId)
@@ -52,7 +52,7 @@ module.exports.deleteCard = (req, res) => {
     });
 };
 
-module.exports.likeCard = (req, res) => {
+const likeCard = (req, res) => {
   const cardId = req.params._id;
   const userId = req.user._id;
 
@@ -77,7 +77,7 @@ module.exports.likeCard = (req, res) => {
     });
 };
 
-module.exports.dislikeCard = (req, res) => {
+const dislikeCard = (req, res) => {
   const cardId = req.params._id;
   const userId = req.user._id;
 
@@ -100,4 +100,8 @@ module.exports.dislikeCard = (req, res) => {
       }
       res.status(ERROR_INTERNAL_SERVER).send({ message: 'Произошла ошибка' });
     });
+};
+
+module.exports = {
+  createCard, getCards, deleteCard, likeCard, dislikeCard,
 };
