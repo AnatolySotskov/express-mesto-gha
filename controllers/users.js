@@ -1,4 +1,7 @@
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const user = require('../models/user');
+
 const {
   CREATED_BY_CODE,
   ERROR_CODE,
@@ -7,12 +10,19 @@ const {
 } = require('../utils/constants');
 
 module.exports.createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
-  user
-    .create({ name, about, avatar })
-    .then((userData) => {
-      res.status(CREATED_BY_CODE).send({ data: userData });
-    })
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
+
+  bcrypt
+    .hash(password, 10)
+    .then((hash) => user
+      .create({
+        email, password: hash, name, about, avatar,
+      })
+      .then((userData) => {
+        res.status(CREATED_BY_CODE).send({ data: userData });
+      }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res
@@ -112,4 +122,29 @@ module.exports.updateAvatar = (req, res) => {
         res.status(ERROR_SERVER).send({ message: 'Произошла ошибка 500' });
       }
     });
+};
+
+module.exports.login = (req, res, next) => {
+  const { email, password } = req.body;
+
+  return user.findUserData(email, password)
+    .then((userData) => {
+      if (userData) {
+        const token = jwt.sign({ _id: userData._id }, 'very-secret-key', { expiresIn: '7d' });
+        res.send({ token });
+      }
+    })
+    .catch(next);
+};
+
+module.exports.getUserInfo = (req, res, next) => {
+  const userId = req.user._id;
+  user.findById(userId)
+    .then((userData) => {
+      if (!userData) {
+        throw new ERROR_NOT_FOUND('Пользователь не найден!');
+      }
+      res.send({ data: userData });
+    })
+    .catch(next);
 };
