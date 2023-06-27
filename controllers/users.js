@@ -19,7 +19,11 @@ module.exports.createUser = (req, res) => {
     .hash(password, 10)
     .then((hash) => user
       .create({
-        email, password: hash, name, about, avatar,
+        email,
+        password: hash,
+        name,
+        about,
+        avatar,
       })
       .then((userData) => {
         res.status(CREATED_BY_CODE).send({ data: userData });
@@ -128,10 +132,14 @@ module.exports.updateAvatar = (req, res) => {
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
 
-  return user.findUserByCredentials(email, password)
+  return user
+    .findUserByCredentials(email, password)
     .then((userData) => {
       if (userData) {
-        const token = jwt.sign({ _id: userData._id }, 'very-secret-key', { expiresIn: '7d' });
+        console.log(userData);
+        const token = jwt.sign({ _id: userData._id }, 'very-secret-key', {
+          expiresIn: '7d',
+        });
         res.send({ token });
       }
     })
@@ -140,7 +148,8 @@ module.exports.login = (req, res, next) => {
 
 module.exports.getUserInfo = (req, res, next) => {
   const userId = req.user._id;
-  user.findById(userId)
+  user
+    .findById(userId)
     .then((userData) => {
       if (!userData) {
         throw new UnauthorizedError('Пользователь не найден!');
