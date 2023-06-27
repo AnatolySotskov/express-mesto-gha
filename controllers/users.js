@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const user = require('../models/user');
+const UnauthorizedError = require('../errors/unauthorizedError');
 
 const {
   CREATED_BY_CODE,
@@ -127,7 +128,7 @@ module.exports.updateAvatar = (req, res) => {
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
 
-  return user.findUserData(email, password)
+  return user.findUserByCredentials(email, password)
     .then((userData) => {
       if (userData) {
         const token = jwt.sign({ _id: userData._id }, 'very-secret-key', { expiresIn: '7d' });
@@ -142,7 +143,7 @@ module.exports.getUserInfo = (req, res, next) => {
   user.findById(userId)
     .then((userData) => {
       if (!userData) {
-        throw new ERROR_NOT_FOUND('Пользователь не найден!');
+        throw new UnauthorizedError('Пользователь не найден!');
       }
       res.send({ data: userData });
     })
