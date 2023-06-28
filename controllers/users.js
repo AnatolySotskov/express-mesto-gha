@@ -136,8 +136,7 @@ module.exports.login = (req, res, next) => {
     .findUserByCredentials(email, password)
     .then((userData) => {
       if (userData) {
-        console.log(userData);
-        const token = jwt.sign({ _id: userData._id }, 'very-secret-key', {
+        const token = jwt.sign({ _id: userData._id }, 'divine-secret-key', {
           expiresIn: '7d',
         });
         res.send({ token });
@@ -152,7 +151,7 @@ module.exports.getUserInfo = (req, res, next) => {
     .findById(userId)
     .then((userData) => {
       if (!userData) {
-        throw new UnauthorizedError('Пользователь не найден!');
+        throw new UnauthorizedError('Пользователь не найден');
       }
       res.send({ data: userData });
     })
