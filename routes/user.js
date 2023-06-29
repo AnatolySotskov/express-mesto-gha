@@ -39,8 +39,7 @@ userRouter.patch(
       .required()
       .keys({
         avatar: Joi.string()
-          .required()
-          .regex(/https*:\/\/[\w\S]{1,}\.[\w\S]{1,}/),
+          .regex(/https*:\/\/[\w\S]{1,}\.[\w\S]{1,}/).required(),
       }),
   }),
   updateAvatar,
