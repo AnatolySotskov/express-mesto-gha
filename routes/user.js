@@ -14,7 +14,7 @@ userRouter.get('/me', getUserInfo);
 userRouter.get(
   '/:_id',
   celebrate({
-    params: Joi.object().keys({ _id: Joi.string().hex().length(24).required }),
+    params: Joi.object().keys({ _id: Joi.string().hex().length(24).required() }),
   }),
   getUserById,
 );
@@ -31,6 +31,7 @@ userRouter.patch(
   }),
   updateProfile,
 );
+
 userRouter.patch(
   '/me/avatar',
   celebrate({
