@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const { errors } = require('celebrate');
-con errorHandler = require('./middlewares/errorHandler')
+const errorHandler = require('./middlewares/errorHandler');
 
 const router = require('./routes');
 
