@@ -6,9 +6,7 @@ const NotFoundError = require('../errors/notFounrError');
 const ErrorCode = require('../errors/errorCode');
 const Conflict = require('../errors/conflict');
 
-const {
-  CREATED_BY_CODE,
-} = require('../utils/constants');
+const { CREATED_BY_CODE } = require('../utils/constants');
 
 module.exports.createUser = (req, res, next) => {
   const {
@@ -26,7 +24,10 @@ module.exports.createUser = (req, res, next) => {
         avatar,
       })
       .then((userData) => {
-        res.status(CREATED_BY_CODE).send({ data: userData });
+        const id = userData._id;
+        res.status(CREATED_BY_CODE).send({
+          id, email, name, about, avatar,
+        });
       }))
     .catch((error) => {
       if (error.name === 'ValidationError') {

@@ -14,7 +14,9 @@ userRouter.get('/me', getUserInfo);
 userRouter.get(
   '/:_id',
   celebrate({
-    params: Joi.object().keys({ _id: Joi.string().hex().length(24).required() }),
+    params: Joi.object().keys({
+      _id: Joi.string().hex().length(24).required(),
+    }),
   }),
   getUserById,
 );
@@ -22,12 +24,10 @@ userRouter.get(
 userRouter.patch(
   '/me',
   celebrate({
-    body: Joi.object()
-      .required()
-      .keys({
-        name: Joi.string().required().min(2).max(30),
-        about: Joi.string().required().min(2).max(30),
-      }),
+    body: Joi.object().keys({
+      name: Joi.string().required().min(2).max(30),
+      about: Joi.string().required().min(2).max(30),
+    }),
   }),
   updateProfile,
 );
@@ -39,7 +39,8 @@ userRouter.patch(
       .required()
       .keys({
         avatar: Joi.string()
-          .regex(/https*:\/\/[\w\S]{1,}\.[\w\S]{1,}/).required(),
+          .regex(/https*:\/\/[\w\S]{1,}\.[\w\S]{1,}/)
+          .required(),
       }),
   }),
   updateAvatar,
