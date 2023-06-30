@@ -8,7 +8,7 @@ const cardRouter = require('./card');
 const { ERROR_NOT_FOUND } = require('../utils/constants');
 
 router.post(
-  '/signin',
+  '/signup',
   celebrate({
     body: Joi.object().keys({
       email: Joi.string().email().required(),
@@ -18,18 +18,18 @@ router.post(
       avatar: Joi.string().regex(/https*:\/\/[\w\S]{1,}\.[\w\S]{1,}/),
     }),
   }),
-  login,
+  createUser,
 );
 
 router.post(
-  '/signup',
+  '/signin',
   celebrate({
     body: Joi.object().keys({
       email: Joi.string().email().required(),
       password: Joi.string().required(),
     }),
   }),
-  createUser,
+  login,
 );
 
 router.use(auth);
