@@ -8,7 +8,7 @@ const cardRouter = require('./card');
 const { ERROR_NOT_FOUND } = require('../utils/constants');
 
 router.post(
-  '/signup',
+  '/signin',
   celebrate({
     body: Joi.object().keys({
       email: Joi.string().email().required(),
@@ -22,7 +22,7 @@ router.post(
 );
 
 router.post(
-  '/signin',
+  '/signup',
   celebrate({
     body: Joi.object().keys({
       email: Joi.string().email().required(),
