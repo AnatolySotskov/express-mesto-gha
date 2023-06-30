@@ -1,6 +1,6 @@
 const card = require('../models/card');
 const NotFoundError = require('../errors/notFounrError');
-const { CREATED_BY_CODE } = require('../utils/constants');
+const { CREATED_BY_CODE, VERY_GOOD } = require('../utils/constants');
 const Forbidden = require('../errors/forbidden');
 
 const getCards = (req, res, next) => {
@@ -41,12 +41,12 @@ const deleteCard = (req, res, next) => {
       if (!dataCard) {
         throw new NotFoundError('Карточка не найдена');
       }
-      if (card.owner.toString() !== userId) {
+      if (dataCard.owner.toString() !== userId) {
         throw new Forbidden('Нельзя удалить чужую карточку');
       }
       card
         .findByIdAndRemove(cardId)
-        .then(() => res.status(CREATED_BY_CODE).send({ data: card }));
+        .then(() => res.status(VERY_GOOD).send({ data: card }));
     })
     .catch((err) => {
       next(err);
