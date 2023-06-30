@@ -37,8 +37,7 @@ router.use('/users', userRouter);
 router.use('/cards', cardRouter);
 
 router.use((req, res, next) => {
-  next(new NotFoundError('Страница не найдена 404'));
-  // res.status(ERROR_NOT_FOUND).send({ message: 'Страница не найдена 404' });
+  next(new NotFoundError('Страница не найдена (Ошибка 404)'));
 });
 
 module.exports = router;

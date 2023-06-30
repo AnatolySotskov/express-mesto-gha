@@ -20,15 +20,6 @@ const createCard = (req, res, next) => {
     })
     .catch((err) => {
       next(err);
-      // if (err.name === 'ValidationError') {
-      //   res
-      //     .status(ERROR_CODE)
-      //     .send({
-      //       message: 'Переданы неправильные данные карточки (Ошибка 400)',
-      //     });
-      // } else {
-      //   res.status(ERROR_SERVER).send({ message: 'Произошла ошибка 500' });
-      // }
     });
 };
 
@@ -39,10 +30,10 @@ const deleteCard = (req, res, next) => {
     .findById(cardId)
     .then((dataCard) => {
       if (!dataCard) {
-        throw new NotFoundError('Карточка не найдена');
+        throw new NotFoundError('Карточка не найдена (Ошибка 404)');
       }
       if (dataCard.owner.toString() !== userId) {
-        throw new Forbidden('Нельзя удалить чужую карточку');
+        throw new Forbidden('Нельзя удалить чужую карточку (Ошибка 403)');
       }
       card
         .findByIdAndRemove(cardId)
@@ -65,18 +56,11 @@ const likeCard = (req, res, next) => {
     .then((dataCard) => {
       if (!dataCard) {
         throw new NotFoundError('Карточка не найдена (Ошибка 404)');
-        // res.status(ERROR_NOT_FOUND).send({ message: 'Карточка не найдена (Ошибка 404)' });
-        // return;
       }
       res.send({ data: dataCard });
     })
     .catch((err) => {
       next(err);
-      // if (err.name === 'CastError') {
-      //   res.status(ERROR_CODE).send({ message: 'Неправильный Id (Ошибка 400)' });
-      //   return;
-      // }
-      // res.status(ERROR_SERVER).send({ message: 'Произошла ошибка 500' });
     });
 };
 
@@ -88,18 +72,11 @@ const dislikeCard = (req, res, next) => {
     .then((dataCard) => {
       if (!dataCard) {
         throw new NotFoundError('Карточка не найдена (Ошибка 404)');
-        // res.status(ERROR_NOT_FOUND).send({ message: 'Карточка не найдена (Ошибка 404)' });
-        // return;
       }
       res.send({ data: dataCard });
     })
     .catch((err) => {
       next(err);
-      // if (err.name === 'CastError') {
-      //   res.status(ERROR_CODE).send({ message: 'Неправильный Id (Ошибка 400) ' });
-      //   return;
-      // }
-      // res.status(ERROR_SERVER).send({ message: 'Произошла ошибка 500' });
     });
 };
 
