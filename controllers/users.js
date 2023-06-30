@@ -83,11 +83,12 @@ module.exports.updateProfile = (req, res, next) => {
       res.send({ data: userData });
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        next(new Conflict('Отправлены неправильные данные'));
-      } else {
-        next(err);
-      }
+      next(err);
+      // if (err.name === 'ValidationError') {
+      //   next(new Conflict('Отправлены неправильные данные'));
+      // } else {
+      //   next(err);
+      // }
     });
 };
 
