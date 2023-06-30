@@ -1,8 +1,7 @@
 const card = require('../models/card');
 const NotFoundError = require('../errors/notFounrError');
-const {
-  CREATED_BY_CODE
-} = require('../utils/constants');
+const { CREATED_BY_CODE } = require('../utils/constants');
+const Forbidden = require('../errors/forbidden');
 
 const getCards = (req, res, next) => {
   card
@@ -34,24 +33,23 @@ const createCard = (req, res, next) => {
 };
 
 const deleteCard = (req, res, next) => {
-  const reqCardId = req.params._id;
+  const cardId = req.params._id;
+  const userId = req.user._id;
   card
-    .findByIdAndRemove(reqCardId)
+    .findById(cardId)
     .then((dataCard) => {
       if (!dataCard) {
-        throw new NotFoundError('Карточка не найдена (Ошибка 404)');
-        // res.status(ERROR_NOT_FOUND).send({ message: 'Карточка не найдена (Ошибка 404)' });
-        // return;
+        throw new NotFoundError('Карточка не найдена');
       }
-      res.send({ data: dataCard });
+      if (card.owner.toString() !== userId) {
+        throw new Forbidden('Нельзя удалить чужую карточку');
+      }
+      card
+        .findByIdAndRemove(cardId)
+        .then(() => res.status(CREATED_BY_CODE).send({ data: card }));
     })
     .catch((err) => {
       next(err);
-      // if (err.name === 'CastError') {
-      //   res.status(ERROR_CODE).send({ message: 'Неправильный Id (Ошибка 400)' });
-      //   return;
-      // }
-      // res.status(ERROR_SERVER).send({ message: 'Произошла ошибка 500' });
     });
 };
 
