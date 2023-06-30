@@ -84,7 +84,7 @@ module.exports.updateProfile = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new Conflict('Отправлены неправильные данные'));
+        next(new ErrorCode('Отправлены неправильные данные'));
       } else {
         next(err);
       }
