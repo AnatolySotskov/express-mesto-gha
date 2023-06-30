@@ -1,4 +1,5 @@
 const card = require('../models/card');
+const NotFoundError = require('../errors/notFounrError');
 const {
   CREATED_BY_CODE,
   ERROR_CODE,
@@ -52,7 +53,7 @@ const deleteCard = (req, res) => {
     });
 };
 
-const likeCard = (req, res) => {
+const likeCard = (req, res, next) => {
   const reqCardId = req.params._id;
   const userId = req.user._id;
   card
@@ -63,17 +64,19 @@ const likeCard = (req, res) => {
     )
     .then((dataCard) => {
       if (!dataCard) {
-        res.status(ERROR_NOT_FOUND).send({ message: 'Карточка не найдена (Ошибка 404)' });
-        return;
+        throw new NotFoundError('Карточка не найдена (Ошибка 404)');
+        // res.status(ERROR_NOT_FOUND).send({ message: 'Карточка не найдена (Ошибка 404)' });
+        // return;
       }
       res.send({ data: dataCard });
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
-        res.status(ERROR_CODE).send({ message: 'Неправильный Id (Ошибка 400)' });
-        return;
-      }
-      res.status(ERROR_SERVER).send({ message: 'Произошла ошибка 500' });
+      next(err);
+      // if (err.name === 'CastError') {
+      //   res.status(ERROR_CODE).send({ message: 'Неправильный Id (Ошибка 400)' });
+      //   return;
+      // }
+      // res.status(ERROR_SERVER).send({ message: 'Произошла ошибка 500' });
     });
 };
 
