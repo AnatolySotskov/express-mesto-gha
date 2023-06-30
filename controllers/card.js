@@ -1,20 +1,17 @@
 const card = require('../models/card');
 const NotFoundError = require('../errors/notFounrError');
 const {
-  CREATED_BY_CODE,
-  ERROR_CODE,
-  ERROR_SERVER,
-  ERROR_NOT_FOUND,
+  CREATED_BY_CODE
 } = require('../utils/constants');
 
-const getCards = (req, res) => {
+const getCards = (req, res, next) => {
   card
     .find({})
     .then((dataCard) => res.send({ data: dataCard }))
-    .catch(() => res.status(ERROR_SERVER).send({ message: 'Произошла ошибка 500' }));
+    .catch((err) => next(err));
 };
 
-const createCard = (req, res) => {
+const createCard = (req, res, next) => {
   const { name, link } = req.body;
   const owner = req.user._id;
   card
@@ -23,13 +20,16 @@ const createCard = (req, res) => {
       res.status(CREATED_BY_CODE).send({ data: dataCard });
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        res
-          .status(ERROR_CODE)
-          .send({ message: 'Переданы неправильные данные карточки (Ошибка 400)' });
-      } else {
-        res.status(ERROR_SERVER).send({ message: 'Произошла ошибка 500' });
-      }
+      next(err);
+      // if (err.name === 'ValidationError') {
+      //   res
+      //     .status(ERROR_CODE)
+      //     .send({
+      //       message: 'Переданы неправильные данные карточки (Ошибка 400)',
+      //     });
+      // } else {
+      //   res.status(ERROR_SERVER).send({ message: 'Произошла ошибка 500' });
+      // }
     });
 };
 
