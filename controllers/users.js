@@ -1,7 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const user = require('../models/user');
-const UnauthorizedError = require('../errors/unauthorizedError ');
 const NotFoundError = require('../errors/notFounrError');
 const ErrorCode = require('../errors/errorCode');
 const Conflict = require('../errors/conflict');
@@ -26,7 +25,11 @@ module.exports.createUser = (req, res, next) => {
       .then((userData) => {
         const id = userData._id;
         res.status(CREATED_BY_CODE).send({
-          id, email, name, about, avatar,
+          id,
+          email,
+          name,
+          about,
+          avatar,
         });
       }))
     .catch((error) => {
@@ -138,7 +141,7 @@ module.exports.getUserInfo = (req, res, next) => {
     .findById(userId)
     .then((userData) => {
       if (!userData) {
-        throw new UnauthorizedError('Пользователь не найден');
+        throw new NotFoundError('Пользователь не найден (ОШибка 404)');
       }
       res.send({ data: userData });
     })
