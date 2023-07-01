@@ -2,6 +2,7 @@ const card = require('../models/card');
 const NotFoundError = require('../errors/notFounrError');
 const { CREATED_BY_CODE, VERY_GOOD } = require('../utils/constants');
 const Forbidden = require('../errors/forbidden');
+const ErrorCode = require('../errors/errorCode');
 
 const getCards = (req, res, next) => {
   card
@@ -40,7 +41,10 @@ const deleteCard = (req, res, next) => {
         .then(() => res.status(VERY_GOOD).send({ data: card }));
     })
     .catch((err) => {
-      next(err);
+      if (err.name === 'CastError') {
+        return next(new ErrorCode('Переданы неправильные данные'));
+      }
+      return next(err);
     });
 };
 
